@@ -1,0 +1,12 @@
+{
+  "speed_limit": 80.0,
+  "base_fine": 500.0,
+  "fine_per_kmh": 50.0,
+  "dataset_source": "csv",
+  "active_csv_filename": "test_ngsim_upload.csv",
+  "ticket_output_dir": "C:\\Users\\admin\\Desktop\\Coding\\Antigravity\\Ticket Generator Traffic\\generated_tickets",
+  "camera_id": "RADAR-HWY-101-N",
+  "location_name": "Interstate 80 (I-80) / US-101 Corridor",
+  "currency_symbol": "$",
+  "unit": "km/h"
+}

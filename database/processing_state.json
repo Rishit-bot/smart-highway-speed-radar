@@ -1,0 +1,8 @@
+{
+  "is_processing": false,
+  "records_processed": 0,
+  "violations_detected": 0,
+  "last_run": null,
+  "active_source": "demo",
+  "status_message": "Monitoring stopped by operator."
+}

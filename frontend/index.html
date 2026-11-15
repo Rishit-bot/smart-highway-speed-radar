@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Highway Speed Radar & Ticket Generator</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js for Interactive Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div id="app-container">
+    <!-- A. SIDEBAR -->
+    <aside id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v4"/>
+            <path d="M12 16h.01"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>SPEEDRADAR</h1>
+          <span>HIGHWAY PATROL</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li>
+          <a class="nav-item active" data-view="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="radar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 12 19 5"/>
+              <circle cx="12" cy="12" r="6"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+            Radar Monitoring
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="vehicles">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
+              <circle cx="6.5" cy="16.5" r="2.5"/>
+              <circle cx="16.5" cy="16.5" r="2.5"/>
+            </svg>
+            Vehicle Records
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="tickets">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <path d="M8 4v4"/>
+              <path d="M16 4v4"/>
+              <path d="M2 10h20"/>
+              <path d="M7 15h2"/>
+              <path d="M11 15h6"/>
+            </svg>
+            E-Tickets
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Analytics
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="datasources">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+            Data Sources
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-status">
+        <div class="radar-live-pill">
+          <div class="pulse-dot" id="radar-pulse"></div>
+          <div>
+            <div style="font-weight: 600; color: var(--text-main); font-size: 11px;">RADAR STATUS</div>
+            <div id="radar-status-text" style="font-size: 10px;">STANDBY</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- B. MAIN WRAPPER & TOP NAVIGATION -->
+    <div id="main-wrapper">
+      <header id="top-bar">
+        <div class="top-bar-left">
+          <h2 class="page-title" id="page-title">Enforcement Dashboard</h2>
+          <span class="source-badge" id="active-source-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+            SOURCE: <span id="source-name">DEMO SIMULATION</span>
+          </span>
+        </div>
+
+        <div class="top-bar-right">
+          <div class="time-display">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="current-datetime">--:--:--</span>
+          </div>
+
+          <div class="status-badge" id="backend-status-pill">
+            <div class="pulse-dot" style="width: 7px; height: 7px;"></div>
+            BACKEND CONNECTED
+          </div>
+
+          <div class="user-profile">
+            <div class="user-avatar">408</div>
+            <div class="user-info">
+              <div class="user-name">Officer J. Vance</div>
+              <div class="user-role">Traffic Enforcement Div</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEW CONTAINER -->
+      <main id="content-viewport">
+        <!-- C. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section active">
+          <!-- Top KPI Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Total Vehicles</span>
+                <div class="metric-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
+                </div>
+              </div>
+              <div class="metric-value" id="kpi-total-vehicles">0</div>
+              <div class="metric-footer">Scanned through checkpoint</div>
+            </div>
+
+            <div class="metric-card danger">
+              <div class="metric-header">
+                <span>Speed Violations</span>
+                <div class="metric-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+              </div>
+              <div class="metric-value" id="kpi-violations">0</div>
+              <div class="metric-footer">
+                <span class="rate-badge danger" id="kpi-violation-rate">0%</span>
+                <span>exceeding speed limit</span>
+              </div>
+            </div>
+
+            <div class="metric-card success">
+              <div class="metric-header">
+                <span>Compliant (Safe)</span>
+                <div class="metric-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+              </div>
+              <div class="metric-value" id="kpi-safe-vehicles">0</div>
+              <div class="metric-footer">Within posted speed limit</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Tickets Generated</span>
+                <div class="metric-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+              </div>
+              <div class="metric-value" id="kpi-tickets-count">0</div>
+              <div class="metric-footer">Electronic citations issued</div>
+            </div>
+
+            <div class="metric-card danger">
+              <div class="metric-header">
+                <span>Simulated Fines</span>
+                <div class="metric-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+              </div>
+              <div class="metric-value" id="kpi-total-fines">$0</div>
+              <div class="metric-footer">Computed via vectorized formula</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Average Speed</span>
+                <div class="metric-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16.2 7.8 12 12"/></svg>
+                </div>
+              </div>
+              <div class="metric-value" id="kpi-avg-speed">0 <span style="font-size: 14px; color: var(--text-muted)">km/h</span></div>
+              <div class="metric-footer">Speed limit: <strong id="kpi-speed-limit">80.0 km/h</strong></div>
+            </div>
+          </div>
+
+          <!-- Charts Section 1 -->
+          <div class="charts-grid">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  Speeding Violations by Hour of Day
+                </div>
+                <div class="panel-actions">
+                  <span class="badge badge-cyan">24H Distribution</span>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-hourly"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+                  Vehicle Compliance Ratio
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-ratio"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Section 2 -->
+          <div class="charts-grid-even">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="6" height="8"/><rect x="9" y="8" width="6" height="12"/><rect x="15" y="4" width="6" height="16"/></svg>
+                  Speed Frequency Distribution (km/h)
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-speed-dist"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  Fine Revenue by Penalty Bracket
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-fines"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Violations Table Panel -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Recent High-Speed Violations
+              </div>
+              <div class="panel-actions">
+                <button class="btn btn-primary btn-sm" id="btn-quick-generate-all">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Issue All Tickets
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="dashboard-violations-table">
+                <thead>
+                  <tr>
+                    <th>Violation ID</th>
+                    <th>Vehicle ID</th>
+                    <th>Recorded Speed</th>
+                    <th>Speed Limit</th>
+                    <th>Excess</th>
+                    <th>Simulated Fine</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-violations-tbody">
+                  <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">No violation data loaded. Start radar processing to scan vehicles.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- D. RADAR MONITORING VIEW -->
+        <section id="view-radar" class="view-section">
+          <!-- Control Banner -->
+          <div class="radar-banner">
+            <div class="radar-banner-info">
+              <h2>Automated Radar Checkpoint & Telemetry HUD</h2>
+              <p>Simulates highway roadside radar detector scanning continuous NGSIM trajectory frames.</p>
+              <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
+                <span class="badge badge-cyan" id="radar-mode-tag">DATASET PLAYBACK SIMULATION</span>
+                <span style="font-size: 11px; color: var(--text-muted);">
+                  Note: Operating in trajectory dataset playback mode. Identifiable photographs are illustrative.
+                </span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div style="text-align: right;">
+                <div style="font-size: 11px; color: var(--text-muted);">SPEED LIMIT</div>
+                <div style="font-size: 18px; font-weight: 700; color: var(--cyan);" id="radar-hud-limit">80.0 km/h</div>
+              </div>
+              <button class="btn btn-primary" id="btn-radar-start">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Start Processing
+              </button>
+              <button class="btn btn-secondary" id="btn-radar-stop">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12"/></svg>
+                Stop
+              </button>
+            </div>
+          </div>
+
+          <!-- Radar Screen and Feed Grid -->
+          <div class="radar-hud-container">
+            <div class="radar-screen" id="radar-viewport">
+              <div class="radar-grid-bg"></div>
+              <div class="radar-sweep-arm"></div>
+              <div class="radar-concentric concentric-1"></div>
+              <div class="radar-concentric concentric-2"></div>
+              <div class="radar-concentric concentric-3"></div>
+
+              <div class="radar-telemetry-overlay">
+                <div>SENSOR: <span id="hud-cam-id">RADAR-HWY-101-N</span></div>
+                <div>AZIMUTH: NORTHBOUND [CH-101]</div>
+                <div>RADAR FREQ: 24.150 GHz (K-BAND)</div>
+                <div>STATE: <span id="hud-state-text">IDLE</span></div>
+                <div>SCANNED VEHICLES: <span id="hud-count-text">0</span></div>
+              </div>
+
+              <!-- Animated Target Marker (Active during simulation) -->
+              <div id="radar-target-reticle" style="position: absolute; display: none; width: 140px; text-align: center; transform: translate(-50%, -50%);">
+                <div style="border: 2px solid var(--red); width: 44px; height: 44px; margin: 0 auto; border-radius: 4px; box-shadow: 0 0 10px var(--red);"></div>
+                <div id="radar-target-tag" style="background: rgba(10,15,25,0.85); font-size: 10px; color: var(--red); font-weight: bold; margin-top: 4px; padding: 2px 4px; border-radius: 3px;">TARGET #105</div>
+              </div>
+            </div>
+
+            <!-- Recent Observations Stream -->
+            <div class="glass-panel" style="padding: 16px;">
+              <div class="panel-header" style="margin-bottom: 12px;">
+                <div class="panel-title" style="font-size: 13px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Real-time Vehicle Observations
+                </div>
+                <span class="badge badge-cyan" id="live-obs-count">0 Records</span>
+              </div>
+              <div class="radar-feed-list" id="radar-observation-stream">
+                <div style="text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 13px;">
+                  Radar receiver waiting. Click "Start Processing" to begin telemetry stream.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- E. VEHICLE RECORDS VIEW -->
+        <section id="view-vehicles" class="view-section">
+          <div class="glass-panel">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <input type="text" id="vehicle-search" class="form-control" placeholder="Search by Vehicle ID..." style="width: 220px;">
+                <select id="vehicle-status-filter" class="form-control" style="width: 160px;">
+                  <option value="ALL">All Statuses</option>
+                  <option value="VIOLATION">Violators Only</option>
+                  <option value="SAFE">Safe (Compliant)</option>
+                </select>
+                <select id="vehicle-class-filter" class="form-control" style="width: 180px;">
+                  <option value="">All Vehicle Classes</option>
+                  <option value="2">Sedan / Auto</option>
+                  <option value="1">Motorcycle</option>
+                  <option value="3">Heavy Truck / Bus</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <button class="btn btn-secondary btn-sm" id="btn-refresh-vehicles">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table" id="vehicles-table">
+                <thead>
+                  <tr>
+                    <th>Vehicle ID</th>
+                    <th>Category</th>
+                    <th>Speed (km/h)</th>
+                    <th>Timestamp</th>
+                    <th>Coordinates (X, Y)</th>
+                    <th>Violation Status</th>
+                    <th>Fine</th>
+                  </tr>
+                </thead>
+                <tbody id="vehicles-tbody">
+                  <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading vehicle records...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+              <div style="font-size: 12px; color: var(--text-muted);" id="vehicles-pagination-info">
+                Showing records 1 - 15 of 0
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" id="btn-prev-page" disabled>Previous</button>
+                <span style="font-size: 13px; font-weight: 600; padding: 4px 10px; display: flex; align-items: center;" id="current-page-num">1 / 1</span>
+                <button class="btn btn-secondary btn-sm" id="btn-next-page" disabled>Next</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- F. E-TICKETS VIEW -->
+        <section id="view-tickets" class="view-section">
+          <div class="glass-panel" style="margin-bottom: 20px;">
+            <div class="panel-header" style="margin-bottom: 0;">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 700;">Electronic Traffic Citations (E-Tickets)</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                  Rendered with OpenCV HUD overlays and Pillow typography. Stored in JSON database.
+                </p>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" id="btn-generate-all-tickets">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Generate Tickets for All Violators
+                </button>
+                <button class="btn btn-secondary" id="btn-refresh-tickets">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  Refresh
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tickets Grid -->
+          <div class="tickets-grid" id="tickets-container">
+            <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 48px;">
+              No tickets generated yet. Run radar scan and click "Generate Tickets for All Violators".
+            </div>
+          </div>
+        </section>
+
+        <!-- G. ANALYTICS VIEW -->
+        <section id="view-analytics" class="view-section">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-header"><span>Average Speed</span></div>
+              <div class="metric-value" id="analytics-avg-speed">0 km/h</div>
+              <div class="metric-footer">Mean across all observed vehicles</div>
+            </div>
+            <div class="metric-card danger">
+              <div class="metric-header"><span>Peak Recorded Velocity</span></div>
+              <div class="metric-value" id="analytics-max-speed">0 km/h</div>
+              <div class="metric-footer">Fastest speed detected on corridor</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-header"><span>Active Speed Limit</span></div>
+              <div class="metric-value" id="analytics-limit">80.0 km/h</div>
+              <div class="metric-footer">Enforced threshold</div>
+            </div>
+            <div class="metric-card danger">
+              <div class="metric-header"><span>Total Citations Issued</span></div>
+              <div class="metric-value" id="analytics-ticket-count">0</div>
+              <div class="metric-footer">Persisted in tickets.json</div>
+            </div>
+          </div>
+
+          <div class="charts-grid-even">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                  Vehicle Classification vs Speeding
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-analytics-classes"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Peak Violation Hours (24-Hour Trend)
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-analytics-hours"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-grid-even">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="6" height="8"/><rect x="9" y="8" width="6" height="12"/><rect x="15" y="4" width="6" height="16"/></svg>
+                  Complete Velocity Histogram
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-analytics-histogram"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  Fine Distribution by Bracket
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-analytics-fines"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- H. DATA SOURCES VIEW -->
+        <section id="view-datasources" class="view-section">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+            <!-- Source 1: Demo Dataset -->
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  Offline Synthetic NGSIM Demo
+                </div>
+                <span class="badge badge-safe">Recommended</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Generates a realistic multi-vehicle highway trajectory stream completely offline. No internet or external file required.
+              </p>
+              <ul style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px; padding-left: 18px; line-height: 1.8;">
+                <li>120 Unique vehicles across 3 classes</li>
+                <li>Multiple consecutive observation frames per vehicle</li>
+                <li>Accurate ft/s to km/h conversion</li>
+              </ul>
+              <button class="btn btn-primary" id="btn-load-demo-source" style="width: 100%;">
+                Load Synthetic NGSIM Telemetry
+              </button>
+            </div>
+
+            <!-- Source 2: CSV Import -->
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Import NGSIM CSV File
+                </div>
+                <span class="badge badge-cyan">Custom File</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Upload your own NGSIM trajectory sample CSV or load the bundled sample file from <code>sample_data/sample_ngsim.csv</code>.
+              </p>
+              <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-secondary" id="btn-choose-csv" style="width: 100%;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload Local CSV Sample
+                </button>
+                <button class="btn btn-secondary" id="btn-load-sample-csv" style="width: 100%;">
+                  Load Bundled <code>sample_ngsim.csv</code>
+                </button>
+              </div>
+              <div id="csv-upload-status" style="margin-top: 12px; font-size: 12px; color: var(--cyan); display: none;"></div>
+            </div>
+
+            <!-- Source 3: Socrata DOT API -->
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  DOT Socrata Open Data API
+                </div>
+                <span class="badge badge-cyan">REST Endpoint</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                Connect to verified Department of Transportation open endpoint:
+              </p>
+              <code style="font-size: 11px; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 4px; display: block; word-break: break-all; margin-bottom: 14px; color: var(--cyan);">
+                https://data.transportation.gov/resource/8ect-6jqj.csv
+              </code>
+              <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 16px;">
+                Note: Ingestion requires public internet access. If unreachable, transparent diagnostic error is surfaced.
+              </p>
+              <button class="btn btn-secondary" id="btn-fetch-api" style="width: 100%;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Ingest from DOT API
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- I. SETTINGS VIEW -->
+        <section id="view-settings" class="view-section">
+          <div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  Radar Enforcement & Fine Calculation Parameters
+                </div>
+              </div>
+
+              <form id="settings-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div class="form-group">
+                    <label class="form-label" for="setting-speed-limit">Enforced Speed Limit (km/h)</label>
+                    <input type="number" id="setting-speed-limit" class="form-control" step="1" min="20" max="200" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="setting-base-fine">Base Violation Fine ($)</label>
+                    <input type="number" id="setting-base-fine" class="form-control" step="10" min="0" required>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div class="form-group">
+                    <label class="form-label" for="setting-fine-per-kmh">Fine Per Excess km/h ($)</label>
+                    <input type="number" id="setting-fine-per-kmh" class="form-control" step="5" min="0" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="setting-camera-id">Radar Sensor Identifier</label>
+                    <input type="text" id="setting-camera-id" class="form-control" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="setting-location-name">Monitoring Corridor / Highway Location</label>
+                  <input type="text" id="setting-location-name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="setting-output-dir">Ticket Output Directory</label>
+                  <input type="text" id="setting-output-dir" class="form-control" readonly style="opacity: 0.7;">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                  <button type="submit" class="btn btn-primary" id="btn-save-settings">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save Enforcement Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Danger Zone / Database Reset -->
+            <div class="glass-panel" style="border-color: var(--border-red);">
+              <div class="panel-header">
+                <div class="panel-title" style="color: var(--red);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Reset Database & Citations
+                </div>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Wipes all stored vehicle observation records, violations, generated ticket files, and telemetry state back to a clean initial state. Persistent settings are preserved.
+              </p>
+              <div>
+                <button class="btn btn-danger" id="btn-open-reset-modal">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  Reset All Records
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- TICKET DETAIL MODAL -->
+  <div class="modal-backdrop" id="ticket-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-ticket-title">Official E-Ticket Citation</h3>
+        <button class="btn btn-secondary btn-icon" id="btn-close-ticket-modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-ticket-img" class="ticket-preview-full" src="" alt="Ticket Evidence Image">
+        <div id="modal-ticket-meta" style="font-size: 13px; color: var(--text-muted);"></div>
+      </div>
+      <div class="modal-footer">
+        <a id="btn-download-ticket-img" class="btn btn-primary" download>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PNG Ticket
+        </a>
+        <button id="btn-download-ticket-json" class="btn btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Download JSON Data
+        </button>
+        <button class="btn btn-secondary" id="btn-dismiss-ticket-modal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET CONFIRMATION MODAL -->
+  <div class="modal-backdrop" id="reset-modal">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: var(--red);">Confirm Database Reset</h3>
+        <button class="btn btn-secondary btn-icon" id="btn-close-reset-modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 14px; color: var(--text-main); margin-bottom: 12px;">
+          Are you sure you want to reset all vehicle observations, speeding violations, and generated tickets?
+        </p>
+        <p style="font-size: 12px; color: var(--text-muted);">
+          This will wipe <code>vehicles.json</code>, <code>violations.json</code>, <code>tickets.json</code>, and delete all generated PNG citation files in <code>generated_tickets/</code>.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-cancel-reset">Cancel</button>
+        <button class="btn btn-danger" id="btn-confirm-reset">Yes, Reset Database</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- JAVASCRIPT MODULES -->
+  <script src="/js/app.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script src="/js/radar.js"></script>
+  <script src="/js/vehicles.js"></script>
+  <script src="/js/tickets.js"></script>
+  <script src="/js/analytics.js"></script>
+</body>
+</html>

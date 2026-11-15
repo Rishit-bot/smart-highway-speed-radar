@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Temporary files & logs
+*.tmp
+*.log
+
+# Optional: You can keep sample tickets or ignore dynamically generated ones
+# Uncomment the line below if you prefer not to commit generated ticket images:
+# generated_tickets/*.png
